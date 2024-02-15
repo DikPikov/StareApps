@@ -32,7 +32,7 @@ typedef struct _LV_ITEM {
 	LPARAM lParam;      // 32-bit value to associate with item 
 } _LV_ITEM;
 
-//Заранее подключаем функции
+//Г‡Г Г°Г Г­ГҐГҐ ГЇГ®Г¤ГЄГ«ГѕГ·Г ГҐГ¬ ГґГіГ­ГЄГ¶ГЁГЁ
 LRESULT CALLBACK WindowEvents(HWND, UINT, WPARAM, LPARAM);
 void AddMenus(HWND);
 void AddControls(HWND);
@@ -43,7 +43,7 @@ void ProcessCreated(IWbemClassObject*);
 void UpdateProcessList();
 void UpdateProcessCountInfo();
 
-//Инициализируем переменные, структуры и определения
+//Г€Г­ГЁГ¶ГЁГ Г«ГЁГ§ГЁГ°ГіГҐГ¬ ГЇГҐГ°ГҐГ¬ГҐГ­Г­Г»ГҐ, Г±ГІГ°ГіГЄГІГіГ°Г» ГЁ Г®ГЇГ°ГҐГ¤ГҐГ«ГҐГ­ГЁГї
 HWND hProcList;
 HWND hProcCount;
 
@@ -76,7 +76,7 @@ size_t bytesWcharLenght = 32;
 #define TASK_ABOUTS 13
 #define TASK_PROPERTIES 14
 
-//здесь создается главное окно программы
+//Г§Г¤ГҐГ±Гј Г±Г®Г§Г¤Г ГҐГІГ±Гї ГЈГ«Г ГўГ­Г®ГҐ Г®ГЄГ­Г® ГЇГ°Г®ГЈГ°Г Г¬Г¬Г»
 HWND CreateMainWindow(HINSTANCE hInstance)
 {
 	hIconImage = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON1));
@@ -97,12 +97,12 @@ HWND CreateMainWindow(HINSTANCE hInstance)
 	return CreateWindowW(L"MainWindowClass", L"MainWindow", WS_OVERLAPPEDWINDOW | WS_VISIBLE, 100, 100, 600, 600, NULL, NULL, NULL, NULL);
 }
 
-//здесь обрабатываются события и команды окна
+//Г§Г¤ГҐГ±Гј Г®ГЎГ°Г ГЎГ ГІГ»ГўГ ГѕГІГ±Гї Г±Г®ГЎГ»ГІГЁГї ГЁ ГЄГ®Г¬Г Г­Г¤Г» Г®ГЄГ­Г 
 LRESULT CALLBACK WindowEvents(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 {
 	switch (msg)
 	{
-	case WM_TIMER: //обновляем данные о текущих процессах
+	case WM_TIMER: //Г®ГЎГ­Г®ГўГ«ГїГҐГ¬ Г¤Г Г­Г­Г»ГҐ Г® ГІГҐГЄГіГ№ГЁГµ ГЇГ°Г®Г¶ГҐГ±Г±Г Гµ
 	{
 		_LV_ITEM lvItem{};
 
@@ -193,7 +193,7 @@ LRESULT CALLBACK WindowEvents(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 		enumProcesses->Release();
 	}
 		break;
-	case WM_NOTIFY: //предоставляем список комманд для выбранного процесса через пкм
+	case WM_NOTIFY: //ГЇГ°ГҐГ¤Г®Г±ГІГ ГўГ«ГїГҐГ¬ Г±ГЇГЁГ±Г®ГЄ ГЄГ®Г¬Г¬Г Г­Г¤ Г¤Г«Гї ГўГ»ГЎГ°Г Г­Г­Г®ГЈГ® ГЇГ°Г®Г¶ГҐГ±Г±Г  Г·ГҐГ°ГҐГ§ ГЇГЄГ¬
 	{
 		LPNMHDR lpnmhdr = (LPNMHDR)lp;
 
@@ -218,7 +218,7 @@ LRESULT CALLBACK WindowEvents(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 			}
 		}
 	}
-	return DefWindowProcW(hwnd, msg, wp, lp); //подстраиваем размеры окна
+	return DefWindowProcW(hwnd, msg, wp, lp); //ГЇГ®Г¤Г±ГІГ°Г ГЁГўГ ГҐГ¬ Г°Г Г§Г¬ГҐГ°Г» Г®ГЄГ­Г 
 	case WM_WINDOWPOSCHANGED:
 		RECT size;
 		GetWindowRect(hwnd, &size);
@@ -226,14 +226,14 @@ LRESULT CALLBACK WindowEvents(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 		SetWindowPos(hProcList, hProcList, 100, 10, size.right - size.left - 15, size.bottom - size.top - 80, SWP_NOZORDER | SWP_NOMOVE);
 
 		break;
-	case WM_COMMAND://обрабатывем команды от разных меню
+	case WM_COMMAND://Г®ГЎГ°Г ГЎГ ГІГ»ГўГҐГ¬ ГЄГ®Г¬Г Г­Г¤Г» Г®ГІ Г°Г Г§Г­Г»Гµ Г¬ГҐГ­Гѕ
 		switch (wp)
 		{
 		case TASK_TERMINATE:
 		{
 			wchar_t info[64];
 			wchar_t wcount[16];
-			wcscpy_s(info, L"вы точно хотите завершить процесс: ");
+			wcscpy_s(info, L"ГўГ» ГІГ®Г·Г­Г® ГµГ®ГІГЁГІГҐ Г§Г ГўГҐГ°ГёГЁГІГј ГЇГ°Г®Г¶ГҐГ±Г±: ");
 			wcscat_s(info, currentProcessName);
 			wcscat_s(info, L" (PID = ");
 			_itow_s(currentProcess, wcount, 10);
@@ -258,7 +258,7 @@ LRESULT CALLBACK WindowEvents(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 			DestroyWindow(hwnd);
 			break;
 		case Menu_ABOUT:
-			MessageBox(NULL, L"StareApps\nправа принадлежат Марату Акматову", L"О программе", MB_OK);
+			MessageBox(NULL, L"StareApps\nГЇГ°Г ГўГ  ГЇГ°ГЁГ­Г Г¤Г«ГҐГ¦Г ГІ ГЊГ Г°Г ГІГі ГЂГЄГ¬Г ГІГ®ГўГі", L"ГЋ ГЇГ°Г®ГЈГ°Г Г¬Г¬ГҐ", MB_OK);
 			break;
 		}
 		break;
@@ -288,19 +288,18 @@ void AddMenus(HWND hWnd)
 
 	hItemMenu = CreatePopupMenu();
 
-	AppendMenu(hItemMenu, MF_STRING, TASK_TERMINATE, L"завершить");
-	AppendMenu(hItemMenu, MF_STRING, TASK_THREAD_TERMINATE, L"завершить поток");
-	AppendMenu(hItemMenu, MF_STRING, TASK_TOGGLE_FREEZE, L"приостановить/продлить");
-	AppendMenu(hItemMenu, MF_STRING, TASK_ABOUTS, L"справка");
-	AppendMenu(hItemMenu, MF_STRING, TASK_PROPERTIES, L"свойства");
+	AppendMenu(hItemMenu, MF_STRING, TASK_TERMINATE, L"Г§Г ГўГҐГ°ГёГЁГІГј");
+	AppendMenu(hItemMenu, MF_STRING, TASK_THREAD_TERMINATE, L"Г§Г ГўГҐГ°ГёГЁГІГј ГЇГ®ГІГ®ГЄ");
+	AppendMenu(hItemMenu, MF_STRING, TASK_TOGGLE_FREEZE, L"ГЇГ°ГЁГ®Г±ГІГ Г­Г®ГўГЁГІГј/ГЇГ°Г®Г¤Г«ГЁГІГј");
+	AppendMenu(hItemMenu, MF_STRING, TASK_ABOUTS, L"Г±ГЇГ°Г ГўГЄГ ");
+	AppendMenu(hItemMenu, MF_STRING, TASK_PROPERTIES, L"Г±ГўГ®Г©Г±ГІГўГ ");
 
-	AppendMenu(hFileMenu, MF_STRING, FileMenu_NEW, L"Новый");
-	AppendMenu(hFileMenu, MF_STRING, FILEMENU_UPDATEPROCESSLIST, L"Обновить список процессов");
+	AppendMenu(hFileMenu, MF_STRING, FILEMENU_UPDATEPROCESSLIST, L"ГЋГЎГ­Г®ГўГЁГІГј Г±ГЇГЁГ±Г®ГЄ ГЇГ°Г®Г¶ГҐГ±Г±Г®Гў");
 	AppendMenu(hFileMenu, MF_SEPARATOR, NULL, L"");
-	AppendMenu(hFileMenu, MF_STRING, FileMenu_EXIT, L"Выход");
+	AppendMenu(hFileMenu, MF_STRING, FileMenu_EXIT, L"Г‚Г»ГµГ®Г¤");
 
-	AppendMenu(hMenu, MF_POPUP, (UINT_PTR)hFileMenu, L"Файл");
-	AppendMenu(hMenu, MF_STRING, Menu_ABOUT, L"О программе");
+	AppendMenu(hMenu, MF_POPUP, (UINT_PTR)hFileMenu, L"Г”Г Г©Г«");
+	AppendMenu(hMenu, MF_STRING, Menu_ABOUT, L"ГЋ ГЇГ°Г®ГЈГ°Г Г¬Г¬ГҐ");
 
 	SetMenu(hWnd, hMenu);
 }
@@ -317,19 +316,19 @@ void AddControls(HWND hwnd)
 
 	SendMessage(hProcList, LVM_SETEXTENDEDLISTVIEWSTYLE, NULL, LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES);
 
-	lvColumn.pszText = (LPWSTR)L"путь запуска\0";
+	lvColumn.pszText = (LPWSTR)L"ГЇГіГІГј Г§Г ГЇГіГ±ГЄГ \0";
 	lvColumn.fmt = LVCFMT_RIGHT & LVCFMT_JUSTIFYMASK;
 	SendMessage(hProcList, LVM_INSERTCOLUMN, 0, (LPARAM)&lvColumn);
-	lvColumn.pszText = (LPWSTR)L"время запуска\0";
+	lvColumn.pszText = (LPWSTR)L"ГўГ°ГҐГ¬Гї Г§Г ГЇГіГ±ГЄГ \0";
 	lvColumn.fmt = LVCFMT_RIGHT & LVCFMT_JUSTIFYMASK;
 	SendMessage(hProcList, LVM_INSERTCOLUMN, 0, (LPARAM)&lvColumn);
-	lvColumn.pszText = (LPWSTR)L"выделенная память\0";
+	lvColumn.pszText = (LPWSTR)L"ГўГ»Г¤ГҐГ«ГҐГ­Г­Г Гї ГЇГ Г¬ГїГІГј\0";
 	SendMessage(hProcList, LVM_INSERTCOLUMN, 0, (LPARAM)&lvColumn);
 
 	lvColumn.fmt = LVCFMT_LEFT & LVCFMT_JUSTIFYMASK;
 	lvColumn.pszText = (LPWSTR)L"CPU\0";
 	SendMessage(hProcList, LVM_INSERTCOLUMN, 0, (LPARAM)&lvColumn);
-	lvColumn.pszText = (LPWSTR)L"название\0";
+	lvColumn.pszText = (LPWSTR)L"Г­Г Г§ГўГ Г­ГЁГҐ\0";
 	SendMessage(hProcList, LVM_INSERTCOLUMN, 0, (LPARAM)&lvColumn);
 	lvColumn.pszText = (LPWSTR)L"PID\0";
 	SendMessage(hProcList, LVM_INSERTCOLUMN, 0, (LPARAM)&lvColumn);
@@ -357,7 +356,7 @@ void ProcessDeleted(DWORD pid)
 	}
 }
 
-//Добавляем новый процесс
+//Г„Г®ГЎГ ГўГ«ГїГҐГ¬ Г­Г®ГўГ»Г© ГЇГ°Г®Г¶ГҐГ±Г±
 void ProcessCreated(IWbemClassObject* process)
 {
 	VARIANT data;
@@ -483,7 +482,7 @@ void UpdateProcessCountInfo()
 
 	_itow_s(processCount, wcount, 10);
 	wchar_t overallInfo[MAX_PATH];
-	wcscpy_s(overallInfo, L"процессов: ");
+	wcscpy_s(overallInfo, L"ГЇГ°Г®Г¶ГҐГ±Г±Г®Гў: ");
 	wcscat_s(overallInfo, wcount);
 
 	SendMessage(hProcCount, WM_SETTEXT, NULL, (LPARAM)&overallInfo);
