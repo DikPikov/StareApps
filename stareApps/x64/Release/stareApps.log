@@ -1,0 +1,29 @@
+﻿  MainWindow.cpp
+D:\StareApps\stareApps\stareApps\MainWindow.cpp(120,21): warning C4018: <: несоответствие типов со знаком и без знака
+D:\StareApps\stareApps\stareApps\MainWindow.cpp(169,36): warning C4244: аргумент: преобразование "__int64" в "_Ty", возможна потеря данных
+          with
+          [
+              _Ty=float
+          ]
+D:\StareApps\stareApps\stareApps\MainWindow.cpp(173,34): warning C4244: аргумент: преобразование "__int64" в "_Ty", возможна потеря данных
+          with
+          [
+              _Ty=float
+          ]
+D:\StareApps\stareApps\stareApps\MainWindow.cpp(441,34): warning C4244: аргумент: преобразование "__int64" в "_Ty", возможна потеря данных
+          with
+          [
+              _Ty=float
+          ]
+D:\StareApps\stareApps\stareApps\MainWindow.cpp(444,32): warning C4244: аргумент: преобразование "__int64" в "_Ty", возможна потеря данных
+          with
+          [
+              _Ty=float
+          ]
+  Создание кода
+D:\StareApps\stareApps\stareApps\MainWindow.cpp(281): warning C4715: WindowEvents: значение возвращается не при всех путях выполнения
+  79 of 165 functions (47.9%) were compiled, the rest were copied from previous compilation.
+    66 functions were new in current compilation
+    0 functions had inline decision re-evaluated but remain unchanged
+  Создание кода завершено
+  stareApps.vcxproj -> D:\StareApps\stareApps\stareApps\x64\Release\stareApps.exe
