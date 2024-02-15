@@ -1,2 +1,4 @@
 # StareApps
-A programm for monitoring processes.
+Программа для мониторинга процессов
+
+
