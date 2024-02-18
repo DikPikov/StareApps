@@ -1,0 +1,8 @@
+﻿  PerformanceWindow.cpp
+D:\StareApps\stareApps\stareApps\PerformanceWindow.cpp(94,23): warning C4018: <: несоответствие типов со знаком и без знака
+  Создание кода
+  0 of 541 functions ( 0.0%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    0 functions had inline decision re-evaluated but remain unchanged
+  Создание кода завершено
+  stareApps.vcxproj -> D:\StareApps\stareApps\stareApps\x64\Release\stareApps.exe
