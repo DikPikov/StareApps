@@ -30,6 +30,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
     UpdateCPUTime();
 
+    RegisterPFwindow(hInstance);
+
     mainWnd = CreateMainWindow(hInstance);
     if (mainWnd == nullptr)
     {
@@ -38,6 +40,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	result = MainLoop();
     DeInitialize();
+    pwReset();
 
 	return 0;
 }

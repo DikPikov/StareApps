@@ -1,25 +1,40 @@
 #pragma once
 #include <Wbemidl.h>
 #include <comdef.h>
+#include <vector>
 
 #pragma comment(lib, "wbemuuid.lib")
 
 //Соединяем все элементы проекта
+//StareApps.cpp
 extern UINT64 deltaTime;
 void UpdateCPUTime();
 
+//MainWindow.cpp
 HWND CreateMainWindow(HINSTANCE);
 void ProcessDeleted(DWORD);
 void ProcessCreated(IWbemClassObject*);
 void UpdateProcessList();
 void UpdateProcessCountInfo();
 
+//PerformanceWindow.cpp
+void RegisterPFwindow(HINSTANCE hInstance);
+HANDLE pwUpdate(LPCTSTR name);
+
+//WMImachine.cpp
 IWbemClassObject* GetProcess(DWORD pid);
 void TerminateProcess(DWORD pid);
 BOOL WMIInitialize();
 BOOL FindAllProcesses();
 IEnumWbemClassObject* GetAllProcesses();
 void DeInitialize();
+
+//PerformanceWriter.cpp
+void pwProcessCreated(LPCTSTR name);
+void pwProcessDeleted(LPCTSTR name);
+void pwAddValue(LPCTSTR name, float CPU, DWORD RAM);
+void pwWrite();
+void pwReset();
 
 class ProcessObject : public IWbemClassObject {};
 	

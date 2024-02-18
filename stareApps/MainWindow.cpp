@@ -5,7 +5,6 @@
 
 #include "StareApps.h"
 #include "resource.h"
-#include <vector>
 
 
 typedef struct _LV_COLUMN {
@@ -32,7 +31,7 @@ typedef struct _LV_ITEM {
 	LPARAM lParam;      // 32-bit value to associate with item 
 } _LV_ITEM;
 
-//Ã‡Ã Ã°Ã Ã­Ã¥Ã¥ Ã¯Ã®Ã¤ÃªÃ«Ã¾Ã·Ã Ã¥Ã¬ Ã´Ã³Ã­ÃªÃ¶Ã¨Ã¨
+//Çàðàíåå ïîäêëþ÷àåì ôóíêöèè
 LRESULT CALLBACK WindowEvents(HWND, UINT, WPARAM, LPARAM);
 void AddMenus(HWND);
 void AddControls(HWND);
@@ -43,7 +42,7 @@ void ProcessCreated(IWbemClassObject*);
 void UpdateProcessList();
 void UpdateProcessCountInfo();
 
-//ÃˆÃ­Ã¨Ã¶Ã¨Ã Ã«Ã¨Ã§Ã¨Ã°Ã³Ã¥Ã¬ Ã¯Ã¥Ã°Ã¥Ã¬Ã¥Ã­Ã­Ã»Ã¥, Ã±Ã²Ã°Ã³ÃªÃ²Ã³Ã°Ã» Ã¨ Ã®Ã¯Ã°Ã¥Ã¤Ã¥Ã«Ã¥Ã­Ã¨Ã¿
+//Èíèöèàëèçèðóåì ïåðåìåííûå, ñòðóêòóðû è îïðåäåëåíèÿ
 HWND hProcList;
 HWND hProcCount;
 
@@ -73,10 +72,10 @@ size_t bytesWcharLenght = 32;
 #define TASK_TERMINATE 10
 #define TASK_THREAD_TERMINATE 11
 #define TASK_TOGGLE_FREEZE 12
-#define TASK_ABOUTS 13
+#define TASK_PERFORMANCE 13
 #define TASK_PROPERTIES 14
 
-//Ã§Ã¤Ã¥Ã±Ã¼ Ã±Ã®Ã§Ã¤Ã Ã¥Ã²Ã±Ã¿ Ã£Ã«Ã Ã¢Ã­Ã®Ã¥ Ã®ÃªÃ­Ã® Ã¯Ã°Ã®Ã£Ã°Ã Ã¬Ã¬Ã»
+//çäåñü ñîçäàåòñÿ ãëàâíîå îêíî ïðîãðàììû
 HWND CreateMainWindow(HINSTANCE hInstance)
 {
 	hIconImage = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON1));
@@ -97,12 +96,12 @@ HWND CreateMainWindow(HINSTANCE hInstance)
 	return CreateWindowW(L"MainWindowClass", L"MainWindow", WS_OVERLAPPEDWINDOW | WS_VISIBLE, 100, 100, 600, 600, NULL, NULL, NULL, NULL);
 }
 
-//Ã§Ã¤Ã¥Ã±Ã¼ Ã®Ã¡Ã°Ã Ã¡Ã Ã²Ã»Ã¢Ã Ã¾Ã²Ã±Ã¿ Ã±Ã®Ã¡Ã»Ã²Ã¨Ã¿ Ã¨ ÃªÃ®Ã¬Ã Ã­Ã¤Ã» Ã®ÃªÃ­Ã 
+//çäåñü îáðàáàòûâàþòñÿ ñîáûòèÿ è êîìàíäû îêíà
 LRESULT CALLBACK WindowEvents(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 {
 	switch (msg)
 	{
-	case WM_TIMER: //Ã®Ã¡Ã­Ã®Ã¢Ã«Ã¿Ã¥Ã¬ Ã¤Ã Ã­Ã­Ã»Ã¥ Ã® Ã²Ã¥ÃªÃ³Ã¹Ã¨Ãµ Ã¯Ã°Ã®Ã¶Ã¥Ã±Ã±Ã Ãµ
+	case WM_TIMER: //îáíîâëÿåì äàííûå î òåêóùèõ ïðîöåññàõ
 	{
 		_LV_ITEM lvItem{};
 
@@ -133,7 +132,8 @@ LRESULT CALLBACK WindowEvents(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 			{
 				VARIANT data;
 				process->Get(L"PrivatePageCount", 0, &data, NULL, NULL);
-				double dvalue = _wtoi(data.bstrVal);
+				DWORD bytes = _wtoi(data.bstrVal);
+				double dvalue = bytes;
 				VariantClear(&data);
 
 				const size_t cSize = 32;
@@ -175,6 +175,10 @@ LRESULT CALLBACK WindowEvents(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 
 				dvalue = (newProcKernel[i] - lastProcKernel[i] + newProcUser[i] - lastProcUser[i]) / deltaTime * 100;
 
+				process->Get(L"Name", 0, &data, NULL, NULL);
+				pwAddValue(data.bstrVal, dvalue, bytes);
+				VariantClear(&data);
+
 				_gcvt_s(chars, dvalue, 16);
 				mbstowcs_s(&bytesWcharLenght, dword, chars, 32);
 
@@ -190,10 +194,12 @@ LRESULT CALLBACK WindowEvents(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 		lastProcKernel = newProcKernel;
 		lastProcUser = newProcUser;
 
+		pwWrite();
+
 		enumProcesses->Release();
 	}
 		break;
-	case WM_NOTIFY: //Ã¯Ã°Ã¥Ã¤Ã®Ã±Ã²Ã Ã¢Ã«Ã¿Ã¥Ã¬ Ã±Ã¯Ã¨Ã±Ã®Ãª ÃªÃ®Ã¬Ã¬Ã Ã­Ã¤ Ã¤Ã«Ã¿ Ã¢Ã»Ã¡Ã°Ã Ã­Ã­Ã®Ã£Ã® Ã¯Ã°Ã®Ã¶Ã¥Ã±Ã±Ã  Ã·Ã¥Ã°Ã¥Ã§ Ã¯ÃªÃ¬
+	case WM_NOTIFY: //ïðåäîñòàâëÿåì ñïèñîê êîììàíä äëÿ âûáðàííîãî ïðîöåññà ÷åðåç ïêì
 	{
 		LPNMHDR lpnmhdr = (LPNMHDR)lp;
 
@@ -218,7 +224,7 @@ LRESULT CALLBACK WindowEvents(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 			}
 		}
 	}
-	return DefWindowProcW(hwnd, msg, wp, lp); //Ã¯Ã®Ã¤Ã±Ã²Ã°Ã Ã¨Ã¢Ã Ã¥Ã¬ Ã°Ã Ã§Ã¬Ã¥Ã°Ã» Ã®ÃªÃ­Ã 
+	return DefWindowProcW(hwnd, msg, wp, lp); //ïîäñòðàèâàåì ðàçìåðû îêíà
 	case WM_WINDOWPOSCHANGED:
 		RECT size;
 		GetWindowRect(hwnd, &size);
@@ -226,14 +232,14 @@ LRESULT CALLBACK WindowEvents(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 		SetWindowPos(hProcList, hProcList, 100, 10, size.right - size.left - 15, size.bottom - size.top - 80, SWP_NOZORDER | SWP_NOMOVE);
 
 		break;
-	case WM_COMMAND://Ã®Ã¡Ã°Ã Ã¡Ã Ã²Ã»Ã¢Ã¥Ã¬ ÃªÃ®Ã¬Ã Ã­Ã¤Ã» Ã®Ã² Ã°Ã Ã§Ã­Ã»Ãµ Ã¬Ã¥Ã­Ã¾
+	case WM_COMMAND://îáðàáàòûâåì êîìàíäû îò ðàçíûõ ìåíþ
 		switch (wp)
 		{
 		case TASK_TERMINATE:
 		{
 			wchar_t info[64];
 			wchar_t wcount[16];
-			wcscpy_s(info, L"Ã¢Ã» Ã²Ã®Ã·Ã­Ã® ÃµÃ®Ã²Ã¨Ã²Ã¥ Ã§Ã Ã¢Ã¥Ã°Ã¸Ã¨Ã²Ã¼ Ã¯Ã°Ã®Ã¶Ã¥Ã±Ã±: ");
+			wcscpy_s(info, L"âû òî÷íî õîòèòå çàâåðøèòü ïðîöåññ: ");
 			wcscat_s(info, currentProcessName);
 			wcscat_s(info, L" (PID = ");
 			_itow_s(currentProcess, wcount, 10);
@@ -245,9 +251,10 @@ LRESULT CALLBACK WindowEvents(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 				TerminateProcess(currentProcess);
 			}
 		}
-		case TASK_THREAD_TERMINATE:
+		case TASK_PERFORMANCE:
 		{
-			
+			HWND pw = CreateWindow(L"PerformanceWindow", L"", WS_OVERLAPPEDWINDOW | WS_VISIBLE, 10, 0, 400, 500, hwnd, NULL, NULL, NULL);
+			SendMessage(pw, WM_USER + 1, NULL, (LPARAM)currentProcessName);
 		}
 			break;
 		break;
@@ -258,16 +265,18 @@ LRESULT CALLBACK WindowEvents(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 			DestroyWindow(hwnd);
 			break;
 		case Menu_ABOUT:
-			MessageBox(NULL, L"StareApps\nÃ¯Ã°Ã Ã¢Ã  Ã¯Ã°Ã¨Ã­Ã Ã¤Ã«Ã¥Ã¦Ã Ã² ÃŒÃ Ã°Ã Ã²Ã³ Ã€ÃªÃ¬Ã Ã²Ã®Ã¢Ã³", L"ÃŽ Ã¯Ã°Ã®Ã£Ã°Ã Ã¬Ã¬Ã¥", MB_OK);
+			MessageBox(NULL, L"StareApps\nïðàâà ïðèíàäëåæàò Ìàðàòó Àêìàòîâó", L"Î ïðîãðàììå", MB_OK);
 			break;
 		}
 		break;
 	case WM_CREATE:
+		SetWindowText(hwnd, L"StareApps");
+
 		LoadImages();
 		AddMenus(hwnd);
 		AddControls(hwnd);
 		UpdateProcessList();
-
+		
 		SendMessage(hwnd, WM_SETICON, ICON_SMALL, (LPARAM)hIconImage);
 		SendMessage(hwnd, WM_SETICON, ICON_BIG, (LPARAM)hIconImage);
 		SetTimer(hwnd, IDC_TIMER, 1000, NULL);
@@ -288,18 +297,19 @@ void AddMenus(HWND hWnd)
 
 	hItemMenu = CreatePopupMenu();
 
-	AppendMenu(hItemMenu, MF_STRING, TASK_TERMINATE, L"Ã§Ã Ã¢Ã¥Ã°Ã¸Ã¨Ã²Ã¼");
-	AppendMenu(hItemMenu, MF_STRING, TASK_THREAD_TERMINATE, L"Ã§Ã Ã¢Ã¥Ã°Ã¸Ã¨Ã²Ã¼ Ã¯Ã®Ã²Ã®Ãª");
-	AppendMenu(hItemMenu, MF_STRING, TASK_TOGGLE_FREEZE, L"Ã¯Ã°Ã¨Ã®Ã±Ã²Ã Ã­Ã®Ã¢Ã¨Ã²Ã¼/Ã¯Ã°Ã®Ã¤Ã«Ã¨Ã²Ã¼");
-	AppendMenu(hItemMenu, MF_STRING, TASK_ABOUTS, L"Ã±Ã¯Ã°Ã Ã¢ÃªÃ ");
-	AppendMenu(hItemMenu, MF_STRING, TASK_PROPERTIES, L"Ã±Ã¢Ã®Ã©Ã±Ã²Ã¢Ã ");
+	AppendMenu(hItemMenu, MF_STRING, TASK_TERMINATE, L"çàâåðøèòü");
+	AppendMenu(hItemMenu, MF_STRING, TASK_THREAD_TERMINATE, L"çàâåðøèòü ïîòîê");
+	AppendMenu(hItemMenu, MF_STRING, TASK_TOGGLE_FREEZE, L"ïðèîñòàíîâèòü/ïðîäëèòü");
+	AppendMenu(hItemMenu, MF_STRING, TASK_PERFORMANCE, L"ñâîäêà");
+	AppendMenu(hItemMenu, MF_STRING, TASK_PROPERTIES, L"ñâîéñòâà");
 
-	AppendMenu(hFileMenu, MF_STRING, FILEMENU_UPDATEPROCESSLIST, L"ÃŽÃ¡Ã­Ã®Ã¢Ã¨Ã²Ã¼ Ã±Ã¯Ã¨Ã±Ã®Ãª Ã¯Ã°Ã®Ã¶Ã¥Ã±Ã±Ã®Ã¢");
+	AppendMenu(hFileMenu, MF_STRING, FileMenu_NEW, L"Íîâûé");
+	AppendMenu(hFileMenu, MF_STRING, FILEMENU_UPDATEPROCESSLIST, L"Îáíîâèòü ñïèñîê ïðîöåññîâ");
 	AppendMenu(hFileMenu, MF_SEPARATOR, NULL, L"");
-	AppendMenu(hFileMenu, MF_STRING, FileMenu_EXIT, L"Ã‚Ã»ÃµÃ®Ã¤");
+	AppendMenu(hFileMenu, MF_STRING, FileMenu_EXIT, L"Âûõîä");
 
-	AppendMenu(hMenu, MF_POPUP, (UINT_PTR)hFileMenu, L"Ã”Ã Ã©Ã«");
-	AppendMenu(hMenu, MF_STRING, Menu_ABOUT, L"ÃŽ Ã¯Ã°Ã®Ã£Ã°Ã Ã¬Ã¬Ã¥");
+	AppendMenu(hMenu, MF_POPUP, (UINT_PTR)hFileMenu, L"Ôàéë");
+	AppendMenu(hMenu, MF_STRING, Menu_ABOUT, L"Î ïðîãðàììå");
 
 	SetMenu(hWnd, hMenu);
 }
@@ -316,19 +326,19 @@ void AddControls(HWND hwnd)
 
 	SendMessage(hProcList, LVM_SETEXTENDEDLISTVIEWSTYLE, NULL, LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES);
 
-	lvColumn.pszText = (LPWSTR)L"Ã¯Ã³Ã²Ã¼ Ã§Ã Ã¯Ã³Ã±ÃªÃ \0";
+	lvColumn.pszText = (LPWSTR)L"ïóòü çàïóñêà\0";
 	lvColumn.fmt = LVCFMT_RIGHT & LVCFMT_JUSTIFYMASK;
 	SendMessage(hProcList, LVM_INSERTCOLUMN, 0, (LPARAM)&lvColumn);
-	lvColumn.pszText = (LPWSTR)L"Ã¢Ã°Ã¥Ã¬Ã¿ Ã§Ã Ã¯Ã³Ã±ÃªÃ \0";
+	lvColumn.pszText = (LPWSTR)L"âðåìÿ çàïóñêà\0";
 	lvColumn.fmt = LVCFMT_RIGHT & LVCFMT_JUSTIFYMASK;
 	SendMessage(hProcList, LVM_INSERTCOLUMN, 0, (LPARAM)&lvColumn);
-	lvColumn.pszText = (LPWSTR)L"Ã¢Ã»Ã¤Ã¥Ã«Ã¥Ã­Ã­Ã Ã¿ Ã¯Ã Ã¬Ã¿Ã²Ã¼\0";
+	lvColumn.pszText = (LPWSTR)L"âûäåëåííàÿ ïàìÿòü\0";
 	SendMessage(hProcList, LVM_INSERTCOLUMN, 0, (LPARAM)&lvColumn);
 
 	lvColumn.fmt = LVCFMT_LEFT & LVCFMT_JUSTIFYMASK;
 	lvColumn.pszText = (LPWSTR)L"CPU\0";
 	SendMessage(hProcList, LVM_INSERTCOLUMN, 0, (LPARAM)&lvColumn);
-	lvColumn.pszText = (LPWSTR)L"Ã­Ã Ã§Ã¢Ã Ã­Ã¨Ã¥\0";
+	lvColumn.pszText = (LPWSTR)L"íàçâàíèå\0";
 	SendMessage(hProcList, LVM_INSERTCOLUMN, 0, (LPARAM)&lvColumn);
 	lvColumn.pszText = (LPWSTR)L"PID\0";
 	SendMessage(hProcList, LVM_INSERTCOLUMN, 0, (LPARAM)&lvColumn);
@@ -352,11 +362,12 @@ void ProcessDeleted(DWORD pid)
 	if (index >= 0)
 	{
 		ListView_DeleteItem(hProcList, index);
+
 		processCount--;
 	}
 }
 
-//Ã„Ã®Ã¡Ã Ã¢Ã«Ã¿Ã¥Ã¬ Ã­Ã®Ã¢Ã»Ã© Ã¯Ã°Ã®Ã¶Ã¥Ã±Ã±
+//Äîáàâëÿåì íîâûé ïðîöåññ
 void ProcessCreated(IWbemClassObject* process)
 {
 	VARIANT data;
@@ -387,7 +398,7 @@ void ProcessCreated(IWbemClassObject* process)
 
 	ListView_SetItem(hProcList, &lvItem);
 
-	wchar_t commandLine[3000];
+	wchar_t commandLine[MAX_PATH];
 
 	process->Get(L"ExecutablePath", 0, &data, NULL, NULL);
 	if (data.bstrVal != NULL) 
@@ -405,7 +416,7 @@ void ProcessCreated(IWbemClassObject* process)
 	char chars[32];
 	wchar_t dword[32];
 	process->Get(L"PrivatePageCount", 0, &data, NULL, NULL);
-	double dvalue = _wtoi(data.bstrVal);
+	float dvalue = _wtoi(data.bstrVal);
 	VariantClear(&data);
 	
 	const size_t cSize = 32;
@@ -473,6 +484,8 @@ void ProcessCreated(IWbemClassObject* process)
 	ListView_SetItem(hProcList, &lvItem);
 	VariantClear(&data);
 
+	pwProcessCreated(name);
+
 	processCount++;
 }
 
@@ -482,7 +495,7 @@ void UpdateProcessCountInfo()
 
 	_itow_s(processCount, wcount, 10);
 	wchar_t overallInfo[MAX_PATH];
-	wcscpy_s(overallInfo, L"Ã¯Ã°Ã®Ã¶Ã¥Ã±Ã±Ã®Ã¢: ");
+	wcscpy_s(overallInfo, L"ïðîöåññîâ: ");
 	wcscat_s(overallInfo, wcount);
 
 	SendMessage(hProcCount, WM_SETTEXT, NULL, (LPARAM)&overallInfo);
@@ -495,6 +508,8 @@ void UpdateProcessList()
 
 	lastProcKernel.clear();
 	lastProcUser.clear();
+
+	pwReset();
 
 	FindAllProcesses();
 }

@@ -60,6 +60,10 @@ HRESULT DeletionEventSink::Indicate(long lObjectCount, IWbemClassObject** apObjA
 		VariantClear(&vTarget);
 		VariantClear(&data);
 
+		object->Get(L"Name", 0, &data, NULL, NULL);
+		pwProcessDeleted(data.bstrVal);
+		VariantClear(&data);
+
 		object->Release();
 		pIUnknown->Release();
 	}
